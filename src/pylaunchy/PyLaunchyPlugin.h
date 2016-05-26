@@ -6,8 +6,11 @@
 
 class PyLaunchyPlugin : public QObject, public PluginInterface
 {
-	Q_OBJECT
-	Q_INTERFACES(PluginInterface)
+    Q_OBJECT
+#if QT_VERSION >= 0x050000
+    Q_PLUGIN_METADATA(IID "net.launchy.PluginInterface.PyLaunchy" FILE "pylaunchy.json")
+#endif
+    Q_INTERFACES(PluginInterface)
 
 public:
 	/** Interface for Launchy */

@@ -35,7 +35,7 @@ def setSettingsObject():
 		# Based on http://lists.kde.org/?l=pykde&m=108947844203156&w=2
 		
 		from sip import wrapinstance, unwrapinstance
-		from PyQt4 import QtCore
+                from PyQt5 import QtCore
 		
 		launchy.settings =  wrapinstance(launchy.__settings, QtCore.QSettings)
 	except ImportError, inst:

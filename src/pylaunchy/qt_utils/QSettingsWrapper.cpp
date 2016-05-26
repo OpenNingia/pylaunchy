@@ -1,4 +1,4 @@
-#include "Precompiled.h"
+#include "../Precompiled.h"
 #include "QSettingsWrapper.h"
 #include <QSettings>
 

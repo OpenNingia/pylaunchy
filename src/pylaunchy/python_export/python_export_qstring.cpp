@@ -7,7 +7,7 @@ a copyright and/or license notice that predates the release of Scribus 1.3.2
 for which a new license (GPL+exception) is in place.
 */
 
-#include "Precompiled.h"
+#include "../Precompiled.h"
 #include <boost/python.hpp>
 #include <QString>
 #include <wchar.h>

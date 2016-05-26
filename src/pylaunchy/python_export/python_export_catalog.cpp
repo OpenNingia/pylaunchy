@@ -1,11 +1,11 @@
-#include "Precompiled.h"
+#include "../Precompiled.h"
 #include <boost/python.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 #include <QtCore/QSet>
 
-#include "launchy/catalog.h"
-#include "ScriptPlugin.h"
-#include "PythonUtils.h"
+#include "../launchy/catalog.h"
+#include "../ScriptPlugin.h"
+#include "../PythonUtils.h"
 
 using namespace boost::python;
 

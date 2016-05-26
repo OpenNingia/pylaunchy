@@ -1,75 +1,114 @@
-#include "Precompiled.h"
+/*
+Launchy: Application Launcher
+Copyright (C) 2007-2009  Josh Karlin, Simon Capewell
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+*/
+
+
+#include "../precompiled.h"
 #include "catalog.h"
 
-CatItem::CatItem() {}
 
-
-
-CatItem::CatItem(QString full, bool isDir) 
-	: fullPath(full) 
+bool CatLessNoPtr(CatItem & a, CatItem & b)
 {
-	int last = fullPath.lastIndexOf("/");
-	if (last == -1) {
-		shortName = fullPath;
+    bool less = CatLess(&a, &b);
 
-	} else {
-		shortName = fullPath.mid(last+1);
-		if (!isDir)
-			shortName = shortName.mid(0,shortName.lastIndexOf("."));
-	}
-
-	lowName = shortName.toLower();
-	data = NULL;
-	usage = 0;
-	id = 0;
+/*	if (less)
+        qDebug() << a.lowName << "(" << a.usage << ") < " << b.lowName << " (" << b.usage << ")";
+    else
+        qDebug() << b.lowName << "(" << b.usage << ") < " << a.lowName << " (" << a.usage << ")";
+*/
+    return less;
 }
 
 
-CatItem::CatItem(QString full, QString shortN) 
-	: fullPath(full), shortName(shortN) 
+bool CatLess(CatItem* a, CatItem* b)
 {
-	lowName = shortName.toLower();
-	usage = 0;
-	id = 0;
-}
+    // Items with negative usage are lowest priority
+    if (a->usage < 0 && b->usage >= 0)
+        return false;
+    if (b->usage < 0 && a->usage >= 0)
+        return true;
 
-CatItem::CatItem(QString full, QString shortN, uint i_d) 
-	: id(i_d), fullPath(full), shortName(shortN)
-{
-	lowName = shortName.toLower();
-	usage = 0;
-}
+    bool localEqual = a->lowName == gSearchText;
+    bool otherEqual = b->lowName == gSearchText;
 
-CatItem::CatItem(QString full, QString shortN, uint i_d, QString iconPath) 
-	: id(i_d), fullPath(full), shortName(shortN), icon(iconPath)
-{
-	lowName = shortName.toLower();
-	usage = 0;
-}
+    // Exact match between search text and item name has higest priority
+    if (localEqual && !otherEqual)
+        return true;
+    if (!localEqual && otherEqual)
+        return false;
 
-CatItem::CatItem(const CatItem &s) {
-	fullPath = s.fullPath;
-	shortName = s.shortName;
-	lowName = s.lowName;
-	icon = s.icon;
-	usage = s.usage;
-	data = s.data;
-	id = s.id;
-}
+    int localFind = a->lowName.indexOf(gSearchText);
+    int otherFind = b->lowName.indexOf(gSearchText);
 
-CatItem& CatItem::operator=( const CatItem &s ) {
-	fullPath = s.fullPath;
-	shortName = s.shortName;
-	lowName = s.lowName;
-	icon = s.icon;
-	usage = s.usage;
-	data = s.data;
-	id = s.id;
-	return *this;
-}
+    if (gSearchText.count() == 1)
+    {
+        // Match at the start
+        if (localFind == 0 && otherFind != 0)
+            return true;
+        else if (localFind != 0 && otherFind == 0)
+            return false;
 
-bool CatItem::operator==(const CatItem& other) const{
-	if (fullPath == other.fullPath)
-		return true;
-	return false;
+        // Higher usage
+        if (a->usage > b->usage)
+            return true;
+        if (a->usage < b->usage)
+            return false;
+    }
+
+    // Contiguous text anywhere in the item name
+    if (localFind != -1 && otherFind == -1)
+        return true;
+    else if (localFind == -1 && otherFind != -1)
+        return false;
+
+    if (localFind != -1 && otherFind != -1)
+    {
+        // Both have word matches
+        // Higher usage
+        if (a->usage > b->usage)
+            return true;
+        if (a->usage < b->usage)
+            return false;
+
+        // Contiguous text nearer the start of the item name
+        if (localFind < otherFind)
+            return true;
+        else if (otherFind < localFind)
+            return false;
+    }
+    else
+    {
+        // Higher usage
+        if (a->usage > b->usage)
+            return true;
+        if (a->usage < b->usage)
+            return false;
+    }
+
+    int localLen = a->lowName.count();
+    int otherLen = b->lowName.count();
+
+    // Favour shorter item names
+    if (localLen < otherLen)
+        return true;
+    if (localLen > otherLen)
+        return false;
+
+    // Absolute tiebreaker to prevent loops
+    return a->fullPath < b->fullPath;
 }

@@ -1,4 +1,4 @@
-#include "Precompiled.h"
+#include "../Precompiled.h"
 #include "QTemporaryFileWrapper.h"
 #include <QTemporaryFile>
 

@@ -12,11 +12,6 @@ struct PluginInfo {
 	QString path;
 	PluginInterface* obj;
 	bool loaded;
-
-	~PluginInfo() {
-		QPluginLoader loader(path);
-		loader.unload();
-	}
 };
 
 #endif // PLUGIN_INFO_H

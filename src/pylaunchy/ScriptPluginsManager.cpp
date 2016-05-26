@@ -88,7 +88,7 @@ void ScriptPluginsManager::unloadPlugin(uint id)
 
 void ScriptPluginsManager::destroyPlugins()
 {
-	LOG_INFO("Destroying script plugins");
+    // LOG_INFO("Destroying script plugins");
 	PluginInfoHash::const_iterator itr = m_scriptPlugins.constBegin();
 	for ( ; itr != m_scriptPlugins.constEnd(); ++itr ) {
 		delete itr.value().obj;

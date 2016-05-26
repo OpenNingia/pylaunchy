@@ -1,10 +1,10 @@
-#include "Precompiled.h"
+#include "../Precompiled.h"
 
 #include <QHash>
-#include "launchy/plugin_interface.h" // For runProgram
-#include "PythonUtils.h"
-#include "ScriptPluginRegisterer.h"
-#include "GlobalPythonModuleData.h"
+#include "../launchy/plugin_interface.h" // For runProgram
+#include "../PythonUtils.h"
+#include "../ScriptPluginRegisterer.h"
+#include "../GlobalPythonModuleData.h"
 
 using namespace boost::python;
 

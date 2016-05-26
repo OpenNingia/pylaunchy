@@ -1,6 +1,6 @@
 /*
 Launchy: Application Launcher
-Copyright (C) 2007  Josh Karlin
+Copyright (C) 2007-2009  Josh Karlin
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -16,50 +16,133 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
-#include "Precompiled.h"
 #include "plugin_interface.h"
+#include <QProcess>
+#include <QDir>
+#include <QFileInfo>
+#include <QDebug>
+#include <QLocale>
 
 /*! \file
     \brief A Documented file.
-    
+
     Details.
 */
 
-#ifdef Q_WS_WIN
-void runProgram(QString path, QString args) 
+#include <QProcessEnvironment>
+
+/*#ifndef VC_EXTRALEAN
+#define VC_EXTRALEAN
+#endif
+
+#ifndef UNICODE
+#define UNICODE
+#endif
+
+#ifndef _WIN32_WINNT
+#   define _WIN32_WINNT 0x0600
+#endif
+
+#ifndef _WIN32_IE
+#    _WIN32_IE 0x0700
+#endif
+
+#include <windows.h>
+#include <shlobj.h>*/
+
+// This is also defined in WinIconProvider, remove from both locations if 64 bit build is produced
+QString aliasTo64(QString path)
 {
-	SHELLEXECUTEINFO ShExecInfo;
+    QProcessEnvironment env = QProcessEnvironment::systemEnvironment ();
+    QString pf32 = env.value("PROGRAMFILES");
+    QString pf64 = env.value("PROGRAMW6432");
 
-	ShExecInfo.cbSize = sizeof(SHELLEXECUTEINFO);
-	ShExecInfo.fMask = SEE_MASK_FLAG_NO_UI;
-	ShExecInfo.hwnd = NULL;
-	ShExecInfo.lpVerb = NULL;
-	ShExecInfo.lpFile = (LPCTSTR) (path).utf16();
-	if (args != "") {
-		ShExecInfo.lpParameters = (LPCTSTR) args.utf16();
-	} else {
-		ShExecInfo.lpParameters = NULL;
-	}
-	QDir dir(path);
-	QFileInfo info(path);
-	if (!info.isDir() && info.isFile())
-		dir.cdUp();
-	
-	qDebug("%s", path);
-	qDebug("%s", dir.absolutePath());
-	
-	ShExecInfo.lpDirectory = (LPCTSTR)QDir::toNativeSeparators(dir.absolutePath()).utf16();
-	ShExecInfo.nShow = SW_NORMAL;
-	ShExecInfo.hInstApp = NULL;
+    // On 64 bit windows, 64 bit shortcuts don't resolve correctly from 32 bit executables, fix it here
+    QFileInfo pInfo(path);
 
-	ShellExecuteEx(&ShExecInfo);
+    if (env.contains("PROGRAMW6432") && pInfo.isSymLink() && pf32 != pf64) {
+        if (QDir::toNativeSeparators(pInfo.symLinkTarget()).contains(pf32)) {
+            QString path64 = QDir::toNativeSeparators(pInfo.symLinkTarget());
+            path64.replace(pf32, pf64);
+            if (QFileInfo(path64).exists()) {
+                path = path64;
+            }
+        }
+        else if (pInfo.symLinkTarget().contains("system32")) {
+            QString path32 = QDir::toNativeSeparators(pInfo.symLinkTarget());
+            if (!QFileInfo(path32).exists()) {
+                path = path32.replace("system32", "sysnative");
+            }
+        }
+    }
+    return path;
 }
-#endif
 
-#ifdef Q_WS_MAC
+int getDesktop() { return DESKTOP_WINDOWS; }
 
-#endif
+/*
+void runProgram(QString path, QString args) {
 
-#ifdef Q_WS_X11
+    SHELLEXECUTEINFO ShExecInfo;
+    bool elevated = (GetKeyState(VK_SHIFT) & 0x80000000) != 0 && (GetKeyState(VK_CONTROL) & 0x80000000) != 0;
 
-#endif
+    ShExecInfo.cbSize = sizeof(SHELLEXECUTEINFO);
+    ShExecInfo.fMask = SEE_MASK_FLAG_NO_UI;
+    ShExecInfo.hwnd = NULL;
+    ShExecInfo.lpVerb = elevated ? L"runas" : NULL;
+    ShExecInfo.lpFile = (LPCTSTR)path.utf16();
+    if (args != "") {
+        ShExecInfo.lpParameters = (LPCTSTR)args.utf16();
+    } else {
+        ShExecInfo.lpParameters = NULL;
+    }
+    QDir dir(path);
+    QFileInfo info(path);
+    if (!info.isDir() && info.isFile())
+        dir.cdUp();
+    QString filePath = QDir::toNativeSeparators(dir.absolutePath());
+    ShExecInfo.lpDirectory = (LPCTSTR)filePath.utf16();
+    ShExecInfo.nShow = SW_NORMAL;
+    ShExecInfo.hInstApp = NULL;
+
+    ShellExecuteEx(&ShExecInfo);
+}
+*/
+void runProgram(QString path, QString args, bool translateSeparators) {
+
+    // This 64 bit aliasing needs to be gotten rid of if we have a 64 bit build
+    path = aliasTo64(path);
+
+
+    SHELLEXECUTEINFO ShExecInfo;
+    //bool elevated = (GetKeyState(VK_SHIFT) & 0x80000000) != 0 && (GetKeyState(VK_CONTROL) & 0x80000000) != 0;
+    bool elevated = false;
+
+    ShExecInfo.cbSize = sizeof(SHELLEXECUTEINFO);
+    ShExecInfo.fMask = SEE_MASK_FLAG_NO_UI;
+    ShExecInfo.fMask = NULL;
+    ShExecInfo.hwnd = NULL;
+    ShExecInfo.lpVerb = elevated ? L"runas" : NULL;
+    QString filePath = translateSeparators ? QDir::toNativeSeparators(path) : path;
+    ShExecInfo.lpFile = (LPCTSTR)filePath.utf16();
+
+    if (args != "") {
+        ShExecInfo.lpParameters = (LPCTSTR)args.utf16();
+    } else {
+        ShExecInfo.lpParameters = NULL;
+    }
+
+
+    QDir dir(path);
+    QFileInfo info(path);
+    if (!info.isDir() && info.isFile())
+        dir.cdUp();
+    QString directory = QDir::toNativeSeparators(dir.absolutePath());
+    ShExecInfo.lpDirectory = (LPCTSTR)directory.utf16();
+    ShExecInfo.nShow = SW_NORMAL;
+    ShExecInfo.hInstApp = NULL;
+
+    ShellExecuteEx(&ShExecInfo);
+}
+
+

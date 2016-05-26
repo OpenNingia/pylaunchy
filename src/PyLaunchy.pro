@@ -1,7 +1,7 @@
  include("PyLaunchyCommon.pro")
  
  TEMPLATE      = lib
- CONFIG       += plugin release
+ CONFIG       += plugin
  FORMS         = 
  VPATH         = pylaunchy/
  
@@ -13,3 +13,5 @@
      CONFIG -= embed_manifest_dll
 }
 
+DISTFILES += \
+    pylaunchy.json

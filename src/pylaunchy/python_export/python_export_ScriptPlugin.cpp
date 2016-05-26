@@ -1,11 +1,11 @@
-#include "Precompiled.h"
+#include "../Precompiled.h"
 #include <boost/python.hpp>
 #include <boost/python/wrapper.hpp>
 #include <boost/python/with_custodian_and_ward.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 
-#include "ScriptPlugin.h"
-#include "PythonUtils.h"
+#include "../ScriptPlugin.h"
+#include "../PythonUtils.h"
 
 using namespace boost::python;
 

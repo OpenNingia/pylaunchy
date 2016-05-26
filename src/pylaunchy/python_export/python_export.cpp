@@ -1,4 +1,4 @@
-#include "Precompiled.h"
+#include "../Precompiled.h"
 #include "python_export_catalog.h"
 #include "python_export_pylaunchy.h"
 #include "python_export_qstring.h"

@@ -30,7 +30,7 @@ PyLaunchyPlugin::PyLaunchyPlugin()
 
 PyLaunchyPlugin::~PyLaunchyPlugin()
 {
-	LOG_DEBUG("Shutting down PyLaunchy");
+    // LOG_DEBUG("Shutting down PyLaunchy");
 }
 
 void PyLaunchyPlugin::PrivateImpl::getID(uint* id)
@@ -140,4 +140,6 @@ void PyLaunchyPlugin::init()
 	m_pImpl->init(*settings);
 }
 
-Q_EXPORT_PLUGIN2(PyLaunchy, PyLaunchyPlugin) 
+#if QT_VERSION < 0x050000
+    Q_EXPORT_PLUGIN2(PyLaunchy, PyLaunchyPlugin)
+#endif
