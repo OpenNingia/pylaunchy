@@ -30,10 +30,10 @@ install:
   - if not %QTDIR:msvc=%==%QTDIR% call "%ProgramFiles(x86)%\Microsoft Visual Studio %VSVER%\VC\vcvarsall.bat" %ARCH%
   - if not %QTDIR:msvc=%==%QTDIR% set make=nmake.exe
   - if not %QTDIR:msvc=%==%QTDIR% %make% /? > nul
-  - if %ARCH%==x86 ( set PYTHON_ROOT=C:\Python27 ) else set PYTHON_ROOT=C:\Python27-x64
-  - if %ARCH%==x86 ( set BOOST_LIBRARYDIR=C:\Libraries\boost\lib32-msvc-%VSVER% ) else set BOOST_LIBRARYDIR=C:\Libraries\boost\lib64-msvc-%VSVER%
-  - if %ARCH%==x86 ( set ISSO=SETUP.iss ) else set ISSO=SETUP_x64.iss
-  - if %ARCH%==x86 ( set SETUPOUT=PyLaunchy_Setup.exe ) else set SETUPOUT=PyLaunchy_Setup_x64.exe
+  - if %ARCH%==x86 (set PYTHON_ROOT=C:\Python27) else set PYTHON_ROOT=C:\Python27-x64
+  - if %ARCH%==x86 (set BOOST_LIBRARYDIR=C:\Libraries\boost\lib32-msvc-%VSVER%) else set BOOST_LIBRARYDIR=C:\Libraries\boost\lib64-msvc-%VSVER%
+  - if %ARCH%==x86 (set ISSO=SETUP.iss) else set ISSO=SETUP_x64.iss
+  - if %ARCH%==x86 (set SETUPOUT=PyLaunchy_Setup.exe) else set SETUPOUT=PyLaunchy_Setup_x64.exe
   - set PYTHON_INCLUDE_DIR=%PYTHON_ROOT%\include
   - set PYTHON_LIB_FILE=%PYTHON_ROOT%\lib\python27.lib 
   - echo Python root %PYTHON_ROOT%
