@@ -36,9 +36,9 @@ install:
   - if %ARCH%==x86 ( set SETUPOUT=PyLaunchy_Setup.exe ) else set SETUPOUT=PyLaunchy_Setup_x64.exe
   - set PYTHON_INCLUDE_DIR=%PYTHON_ROOT%\include
   - set PYTHON_LIB_FILE=%PYTHON_ROOT%\lib\python27.lib 
-  - echo Python root: %PYTHON_ROOT%
-  - echo Python include: %PYTHON_INCLUDE_DIR%
-  - echo Python lib: %PYTHON_LIB_FILE%
+  - echo Python root %PYTHON_ROOT%
+  - echo Python include %PYTHON_INCLUDE_DIR%
+  - echo Python lib %PYTHON_LIB_FILE%
   - choco install -y InnoSetup
   - set PATH=C:\Program Files (x86)\Inno Setup 5;%PATH%
     
