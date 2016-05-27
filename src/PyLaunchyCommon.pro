@@ -8,6 +8,9 @@ error("The PYTHON_LIB_FILE environment variable is not defined.")
 !exists($$(BOOST_ROOT)) {
 error("The BOOST_ROOT environment variable is not defined.")
 }
+!exists($$(BOOST_LIBRARYDIR)) {
+error("The BOOST_LIBRARYDIR environment variable is not defined.")
+}
 
 HEADERS       = launchy/catalog.h launchy/plugin_interface.h
 # SOURCES       = launchy/catalog.cpp launchy/plugin_interface.cpp
@@ -46,13 +49,5 @@ win32 {
     DEFINES += _CRT_SECURE_NO_DEPRECATE
     LIBS += shell32.lib
     LIBS += $$(PYTHON_LIB_FILE)
-
-    !contains(QMAKE_TARGET.arch, x86_64) {
-        message("x86 build")
-        LIBS += -L$$(BOOST_ROOT)\lib32-msvc-12.0
-
-    } else {
-        message("x86_64 build")
-        LIBS += -L$$(BOOST_ROOT)\lib64-msvc-12.0
-    }
+    LIBS += -L$$(BOOST_LIBRARYDIR)
 }

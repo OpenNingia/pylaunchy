@@ -36,11 +36,9 @@ Source: tmpbuild\isxdl.dll; Flags: dontcopy
 
 ; PyLaunchy core
 Source: {#SrcDir}\windows\PyLaunchy\Release\PyLaunchy.dll; DestDir: {app}\plugins; Flags: ignoreversion
-Source: tmpbuild\boost_python-vc80-mt-1_41.dll; DestDir: {app}\
+Source: {%BOOST_LIBS}\boost_python*.dll; DestDir: {app}\
 Source: icons\pysimple.png; DestDir: {app}\plugins\icons
 Source: {#PluginsDir}\pysimple.py; DestDir: {app}\plugins\python\examples
-Source: lib\sip.pyd; DestDir: {app}\plugins\python\lib
-Source: lib\PyQt4\*.*; DestDir: {app}\plugins\python\lib\PyQt4; Flags: recursesubdirs; Excludes: .svn
 
 ; Documentation
 Source: {#RootDir}\doc\build\*.*; DestDir: {app}\plugins\python\doc; Flags: recursesubdirs; Excludes: {#Exclude}, *.zip, .doctrees; Components: docs
